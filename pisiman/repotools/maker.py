@@ -497,8 +497,8 @@ def setup_live_sddm(project):
         for line in open(sddmconf_path, "r").readlines():
             if line.startswith("User="):
                 #25-09-2022 tarihinde değişti
-                #lines.append("User=pisi\n")
-                lines.append("User=root\n")
+                lines.append("User=pisi\n")
+                #lines.append("User=root\n")
             elif line.startswith("Session="):
                 # lines.append("Session=/usr/share/xsessions/plasma-mediacenter\n") #this code may be have an error
                 lines.append("Session=plasma.desktop\n")
