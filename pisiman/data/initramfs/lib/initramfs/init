@@ -312,7 +312,8 @@ mount_cdroot() {
 
     # for userspace applications
     REAL_ROOT_TYPE=`echo "${ROOT_DEVICE}" | sed -e 's/^\/newroot\/dev\///' | grep -qE '^sr[0-9]*|^hd[a-z]|^pcd[0-9]|^xvd*' && echo "optical" || echo "harddisk"`
-    echo "${REAL_ROOT_TYPE}" > /newroot/run/pisilinux/livemedia
+    #07-03-2023 İptal edildi. Erkan ışık
+    #echo "${REAL_ROOT_TYPE}" > /newroot/run/pisilinux/livemedia
 
     # this is needed for yali
     MNTDIR=`grep \/mnt\/cdrom\  /proc/mounts|sed 's/\/newroot//g'`
@@ -479,7 +480,8 @@ mount -t devtmpfs devtmpfs /dev
 mkdir -m 0755 /dev/pts
 mount -t devpts -o gid=5,mode=620 devpts /dev/pts
 
-modprobe -a sr_mod isofs overlay
+#07032023 iptal edildi. Erkan ışık
+#modprobe -a sr_mod isofs overlay
 
 # First parse config file, then cmdline to allow overwriting internal config
 if [ -f "$INITRAMFSCONF" ]
