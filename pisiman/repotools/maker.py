@@ -149,8 +149,8 @@ def mkinitcpio(project):
 
         # run('umount %s/dev' % image_dir, ignore_error=True)
         unoverlay(project, "dev", ignore_error=True)
-        run('umount %s/proc' % image_dir, ignore_error=True)
-        run('umount %s/sys' % image_dir, ignore_error=True)
+        run('umount -l %s/proc' % image_dir, ignore_error=True)
+        run('umount -l %s/sys' % image_dir, ignore_error=True)
 
 
         def chrun(cmd):
@@ -205,8 +205,8 @@ def mkinitcpio(project):
         #                 "-g", "/boot/initramfs-%s.img" % kernel_version]))
 
         # run('umount %s/dev' % image_dir)
-        run('umount %s/proc' % image_dir)
-        run('umount %s/sys' % image_dir)
+        run('umount -l %s/proc' % image_dir)
+        run('umount -l %s/sys' % image_dir)
         unoverlay(project, "dev")
     except KeyboardInterrupt:
         print("Keyboard Interrupt: make_image() cancelled.")
@@ -695,8 +695,8 @@ def squash_live_config_image(project):
         if project.display_manager() is None: packages.append("xdm")
 
         # yapılandırma
-        run('umount %s/proc' % image_dir, ignore_error=True)
-        run('umount %s/sys' % image_dir, ignore_error=True)
+        run('umount -l %s/proc' % image_dir, ignore_error=True)
+        run('umount -l %s/sys' % image_dir, ignore_error=True)
 
         # kurulum
         run('/bin/mount --bind /proc %s/proc' % image_dir)
@@ -731,6 +731,8 @@ def squash_live_config_image(project):
         # cp2skel("./data/yali/yali.desktop", ".config/autostart")
         shutil.copy("./data/yali/yali.desktop",
                     "{}/usr/share/applications/".format(config_image_dir))
+        shutil.copy("./data/yali/yali.desktop",
+                    "{}/home/pisi/Masaüstü/".format(config_image_dir))
      
         # shutil.copy("./data/yali/yali.desktop",
         #             "{}/home/pisi/.config/autostart/".format(config_image_dir))
@@ -1105,8 +1107,8 @@ def make_image(project):
 #        image_file = project.image_file()
 
         image_dir = project.image_dir()
-        run('umount %s/proc' % image_dir, ignore_error=True)
-        run('umount %s/sys' % image_dir, ignore_error=True)
+        run('umount -l %s/proc' % image_dir, ignore_error=True)
+        run('umount -l %s/sys' % image_dir, ignore_error=True)
 
         image_dir = project.image_dir(clean=True)
         run('pisi --yes-all -D"%s" ar pisilinux-install %s --ignore-check\
@@ -1251,8 +1253,8 @@ def make_image(project):
         os.utime(os.path.join(image_dir, "etc/profile.env"), (1, 1))
 
         # chrun('killall comar')
-        run('umount %s/proc' % image_dir)
-        run('umount %s/sys' % image_dir)
+        run('umount -l %s/proc' % image_dir)
+        run('umount -l %s/sys' % image_dir)
         chrun("rm -rf /run/dbus/*")
 
         finished_path = os.path.join(project.work_dir, "finished.txt")
