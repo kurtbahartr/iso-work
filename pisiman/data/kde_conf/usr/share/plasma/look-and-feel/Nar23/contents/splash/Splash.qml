@@ -23,7 +23,7 @@ import QtGraphicalEffects 1.0
 
 Image {
     id: root
-    source: "images/2560x1440.jpg"
+    source: "images/Nar_Background.jpg"
     fillMode: Image.PreserveAspectCrop
 
     property int stage

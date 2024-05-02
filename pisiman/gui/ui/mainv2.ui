@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>893</width>
-    <height>483</height>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -269,18 +269,6 @@ output dir</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_4">
-       <property name="minimumSize">
-        <size>
-         <width>873</width>
-         <height>0</height>
-        </size>
-       </property>
-       <attribute name="title">
-        <string>Sayfa</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_7"/>
-      </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>Installation Collections</string>
@@ -368,7 +356,7 @@ output dir</string>
      <x>0</x>
      <y>0</y>
      <width>893</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -577,22 +565,6 @@ output dir</string>
   <connection>
    <sender>check_use_project_dir</sender>
    <signal>toggled(bool)</signal>
-   <receiver>le_iso_output_dir</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>83</x>
-     <y>400</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>251</x>
-     <y>401</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>check_use_project_dir</sender>
-   <signal>toggled(bool)</signal>
    <receiver>btn_browse_iso_output_dir</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
@@ -603,6 +575,22 @@ output dir</string>
     <hint type="destinationlabel">
      <x>835</x>
      <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>check_use_project_dir</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>le_iso_output_dir</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>401</y>
     </hint>
    </hints>
   </connection>

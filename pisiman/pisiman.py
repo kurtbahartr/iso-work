@@ -87,13 +87,8 @@ def maker(op, project_file):
         maker.make_iso(project)
 
     end = time.time()
-    #print("Total time is", end - start, "seconds.")
-    elapsed = end - start
-    hours = int(elapsed // 3600)
-    minutes = int((elapsed % 3600) // 60)
-    seconds = int(elapsed % 60 + 0.5)
+    print("Total time is", end - start, "seconds.")
 
-    print("Total time: {}:{}:{:.2f}".format(hours, minutes, seconds))
 
 def usage(app):
     print("Usage: %s [command] path/to/project.xml" % app)

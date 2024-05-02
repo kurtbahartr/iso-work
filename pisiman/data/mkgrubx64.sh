@@ -1,7 +1,6 @@
 #!/bin/sh
 
-#efi_path="efi/EFI/boot/grubx64.efi"
-efi_path="efi/EFI/boot/bootx64.efi"
+efi_path="efi/EFI/boot/grubx64.efi"
 theme="pisilinux"
 
 usage (){

@@ -149,8 +149,8 @@ def mkinitcpio(project):
 
         # run('umount %s/dev' % image_dir, ignore_error=True)
         unoverlay(project, "dev", ignore_error=True)
-        run('umount -l %s/proc' % image_dir, ignore_error=True)
-        run('umount -l %s/sys' % image_dir, ignore_error=True)
+        run('umount %s/proc' % image_dir, ignore_error=True)
+        run('umount %s/sys' % image_dir, ignore_error=True)
 
 
         def chrun(cmd):
@@ -205,8 +205,8 @@ def mkinitcpio(project):
         #                 "-g", "/boot/initramfs-%s.img" % kernel_version]))
 
         # run('umount %s/dev' % image_dir)
-        run('umount -l %s/proc' % image_dir)
-        run('umount -l %s/sys' % image_dir)
+        run('umount %s/proc' % image_dir)
+        run('umount %s/sys' % image_dir)
         unoverlay(project, "dev")
     except KeyboardInterrupt:
         print("Keyboard Interrupt: make_image() cancelled.")
@@ -492,6 +492,7 @@ def setup_live_sddm(project):
     #22-05-2022 tarihinde değiştirilmiştir.
     #sddmconf_path = os.path.join(image_dir, "etc/sddm.conf")
     sddmconf_path = os.path.join(image_dir, "usr/lib/sddm/sddm.conf.d/sddm.conf")
+    """
     if os.path.exists(sddmconf_path):
         lines = []
         for line in open(sddmconf_path, "r").readlines():
@@ -501,17 +502,16 @@ def setup_live_sddm(project):
                 #lines.append("User=root\n")
             elif line.startswith("Session="):
                 # lines.append("Session=/usr/share/xsessions/plasma-mediacenter\n") #this code may be have an error
-                lines.append("Session=plasma.desktop\n")
+                lines.append("Session=plasma\n")
             # elif line.startswith("#ServerTimeout="):
             #    lines.append("ServerTimeout=60\n")
             else:
                 lines.append(line)
         open(sddmconf_path, "w").write("".join(lines))
     else:
-        print("*** {} doesn't exist, setup_live_sddm() returned".format(
-            sddmconf_path))
-
-# FIXME: bu yapıandırma liveconfig isimli sqfs dosyasına aktarılacak!
+        print("*** {} doesn't exist, setup_live_sddm() returned".format( sddmconf_path))
+    """
+  # FIXME: bu yapıandırma liveconfig isimli sqfs dosyasına aktarılacak!
 def setup_live_lxdm(project):
     image_dir = project.image_dir()
     lxdmconf_path = os.path.join(image_dir, "etc/lxdm/lxdm.conf")
@@ -695,8 +695,8 @@ def squash_live_config_image(project):
         if project.display_manager() is None: packages.append("xdm")
 
         # yapılandırma
-        run('umount -l %s/proc' % image_dir, ignore_error=True)
-        run('umount -l %s/sys' % image_dir, ignore_error=True)
+        run('umount %s/proc' % image_dir, ignore_error=True)
+        run('umount %s/sys' % image_dir, ignore_error=True)
 
         # kurulum
         run('/bin/mount --bind /proc %s/proc' % image_dir)
@@ -763,11 +763,11 @@ def squash_live_config_image(project):
 
         # kde yapılandırması ================================================
         if 'plasma-workspace' in project.all_install_image_packages:
-            os.system("cp -rf ./data/kde_conf/skel/.config {}/home/pisi".format(config_image_dir))
+            #os.system("cp -rf ./data/kde_conf/skel/.config {}/home/pisi".format(config_image_dir))
             os.system("cp -rf ./data/kde_conf/.local {}/home/pisi".format(config_image_dir))
          
             # bu kısım kullanıcı oluşturulmadan önce eklenmeli
-            os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(config_image_dir))
+            #os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(config_image_dir))
             os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/".format(config_image_dir))
             # os.system("cp -rf ./data/kde_config/.config {}/home/pisi".format(config_image_dir))
             # os.system("cp -rf ./data/kde_config/.local {}/home/pisi".format(config_image_dir))
@@ -848,6 +848,12 @@ def squash_image(project):
                     "{}/usr/share/polkit-1/actions/".format(image_dir))
         shutil.copy("./data/yali/yali-rescue.desktop",
                     "{}/usr/share/applications/".format(image_dir))
+        # lxqt
+        #run("mkdir -p %s/home/pisi/.config/lxqt" % image_dir)
+        #shutil.copy("./data/lxqt/session.conf", "{}/home/pisi/.config/lxqt/".format(image_dir))
+        #shutil.copy("./data/lxqt/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+        #shutil.copy("./data/yali/yali.desktop","{}/home/pisi/Desktop/".format(image_dir))
 
         repo = project.get_repo()
         kernel_version = repo.packages['kernel'].version
@@ -1107,8 +1113,8 @@ def make_image(project):
 #        image_file = project.image_file()
 
         image_dir = project.image_dir()
-        run('umount -l %s/proc' % image_dir, ignore_error=True)
-        run('umount -l %s/sys' % image_dir, ignore_error=True)
+        run('umount %s/proc' % image_dir, ignore_error=True)
+        run('umount %s/sys' % image_dir, ignore_error=True)
 
         image_dir = project.image_dir(clean=True)
         run('pisi --yes-all -D"%s" ar pisilinux-install %s --ignore-check\
@@ -1253,7 +1259,7 @@ def make_image(project):
         os.utime(os.path.join(image_dir, "etc/profile.env"), (1, 1))
 
         # chrun('killall comar')
-        run('umount -l %s/proc' % image_dir)
+        run('umount %s/proc' % image_dir)
         run('umount -l %s/sys' % image_dir)
         chrun("rm -rf /run/dbus/*")
 
