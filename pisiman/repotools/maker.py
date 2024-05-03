@@ -852,7 +852,7 @@ def squash_image(project):
         #run("mkdir -p %s/home/pisi/.config/lxqt" % image_dir)
         #shutil.copy("./data/lxqt/session.conf", "{}/home/pisi/.config/lxqt/".format(image_dir))
         #shutil.copy("./data/lxqt/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
-        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+        #shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
         #shutil.copy("./data/yali/yali.desktop","{}/home/pisi/Desktop/".format(image_dir))
 
         repo = project.get_repo()
