@@ -1,6 +1,6 @@
 [General]
 #ColorScheme=BreezeLight
-#Name=Breeze
+Name=maia
 shadeSortColumn=true
 
 [Icons]
@@ -8,10 +8,10 @@ Theme=maia
 
 [KDE]
 ChangeCursor=true
-#LookAndFeelPackage=org.kde.pisidefault.desktop
-LookAndFeelPackage=Nar23
+LookAndFeelPackage=PisiLinux-24-Splash
+
 contrast=4
-widgetStyle=Breeze
+widgetStyle=maia
 SingleClick=true
 
 #[KShortcutsDialog Settings]

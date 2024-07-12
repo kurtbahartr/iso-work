@@ -13,6 +13,7 @@
 
 import os
 import sys
+import datetime
 
 def I18N_NOOP(x):
     return x
@@ -28,15 +29,27 @@ def size_fmt(size):
     tmp = ".".join(parts)
     return tmp.lstrip("0")
 
-def xterm_title(message):
+def xterm_title(message, log_dir="logs"):
     """Set message as console window title."""
     if os.environ.has_key("TERM") and sys.stderr.isatty():
         terminalType = os.environ["TERM"]
         for term in ["xterm", "Eterm", "aterm", "rxvt", "screen", "kterm", "rxvt-unicode"]:
             if terminalType.startswith(term):
+
                 sys.stderr.write("\x1b]2;"+str(message)+"\x07")
                 sys.stderr.flush()
                 break
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
+    # Log the message to a file with timestamp
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+    log_file = os.path.join(log_dir, "{0}_log.txt".format(timestamp))
+    with open(log_file, "a") as f:
+        log_entry = "%s %s\n" % (timestamp, message)
+        f.write(log_entry)
+        f.flush()
+    
 
 def wait_bus(unix_name, timeout=5, wait=0.1, stream=True):
     import socket

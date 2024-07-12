@@ -1,6 +1,7 @@
 #!/bin/sh
 
-efi_path="efi/EFI/boot/grubx64.efi"
+#efi_path="efi/EFI/boot/grubx64.efi"
+efi_path="efi_grub/boot"
 theme="pisilinux"
 
 usage (){
@@ -34,4 +35,5 @@ done
 
 # grub2-mkstandalone --locale-directory=/boot/grub2/locale/ -d /usr/lib/grub/x86_64-efi/ -O x86_64-efi --themes="pisi" -o $efi_path "boot/grub/grub.cfg=./grub.cfg" -v
 # grub2-mkstandalone -d /usr/lib/grub/x86_64-efi/ -O x86_64-efi --fonts="/boot/grub2/fonts/unicode.pf2" --locale-directory=/usr/share/locale/ --themes=$theme -o $efi_path "boot/grub/grub.cfg=./grub.cfg" -v
-  grub2-mkstandalone -d /usr/lib/grub/x86_64-efi/ -O x86_64-efi --fonts="/boot/grub2/fonts/unicode.pf2" --themes=$theme -o $efi_path "boot/grub/grub.cfg=./grub.cfg" -v
+#  grub2-mkstandalone -d /usr/lib/grub/x86_64-efi/ -O x86_64-efi --fonts="/boot/grub2/fonts/unicode.pf2" --themes=$theme -o $efi_path "boot/grub/grub.cfg=./grub.cfg" -v
+grub2-mkstandalone -d /usr/lib/grub/x86_64-efi/ -O x86_64-efi --fonts="/usr/share/grub/unicode.pf2" --themes=$theme -o $efi_path "boot/grub/grub.cfg=./grub.cfg" -v

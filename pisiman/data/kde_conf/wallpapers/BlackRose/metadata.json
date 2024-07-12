@@ -1,0 +1,15 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "erkanisik@pisilinux.org",
+                "Name": "Erkan Isik",
+                "Name[tr]": "Erkan IŞIK"
+            }
+        ],
+        "Id": "BlackRose",
+        "License": "LGPLv3",
+        "Name": "Black Rose",
+        "Name[tr]": "Kara Gül"
+    }
+}

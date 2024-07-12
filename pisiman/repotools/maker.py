@@ -519,7 +519,7 @@ def setup_live_lxdm(project):
         lines = []
         for line in open(lxdmconf_path, "r").readlines():
             if line.startswith("# autologin=") or line.startswith("autologin="):
-                lines.append("autologin=pisi\n session=/usr/bin/startkde\n")
+                lines.append("autologin=pisi\nsession=/usr/bin/startxfce4")
             elif line.startswith("session="):
                 if os.path.exists("%s/usr/bin/mate-session" % image_dir):
                     lines.append("session=/usr/bin/mate-session\n")
@@ -842,6 +842,8 @@ def squash_image(project):
         # cp2skel("./data/yali/yali.desktop", ".config/autostart")
         shutil.copy("./data/yali/yali.desktop",
                     "{}/usr/share/applications/".format(image_dir))
+
+        
         # shutil.copy("./data/yali/yali.desktop",
         #             "{}/home/pisi/.config/autostart/".format(image_dir))
         shutil.copy("./data/yali/org.pisilinux.yali.policy",
@@ -852,8 +854,21 @@ def squash_image(project):
         #run("mkdir -p %s/home/pisi/.config/lxqt" % image_dir)
         #shutil.copy("./data/lxqt/session.conf", "{}/home/pisi/.config/lxqt/".format(image_dir))
         #shutil.copy("./data/lxqt/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
-        #shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
-        #shutil.copy("./data/yali/yali.desktop","{}/home/pisi/Desktop/".format(image_dir))
+
+        
+        #burası yeniden ele alınacak erkan ışık
+        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+        shutil.copy("./data/kde_conf/kxkbrc", "{}`/home/pisi/.config/".format(image_dir))
+        #shutil.copy("./data/yali/yali.desktop","{}/home/pisi/Masaüstü/".format(image_dir))
+        
+        #wallpaper adımlarının yapılması
+        #os.system("cp -rf ./data/kde_conf/wallpapers {}/usr/share".format(image_dir))
+            
+        #splash yüklenmesi
+        #os.system("cp -rf ./data/kde_conf/look-and-feel {}/usr/share/plasma".format(image_dir))
+        os.system("cp -rf ./data/kde_conf/xdg {}/etc".format(image_dir))
+        chrun("chown -R pisi:wheel /home/pisi/.config")
+        chrun("chown -R pisi:wheel /home/pisi/.local")
 
         repo = project.get_repo()
         kernel_version = repo.packages['kernel'].version
@@ -879,11 +894,13 @@ def squash_image(project):
             # yeni kullanıcıda sık kullanılarlar için skel e eklenmeli
             # os.system("cp -rf ./data/kde_conf/.local {}/home/pisi".format(image_dir))
             # os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(image_dir))
-            os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/".format(image_dir))
+            os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/xdg/".format(image_dir))
             os.system("cp -rf ./data/kde_conf/usr {}/".format(image_dir))
             #erkan
-            os.system("cp -rf ./data/kde_conf/wallpapers {}/usr/share".format(image_dir))
-            os.system("cp -rf ./data/etc {}/etc".format(image_dir))
+            
+           
+            #os.system("cp -rf ./data/etc {}/etc".format(image_dir))
+            
             # os.system("cp -rf ./data/kde_config/.config {}/home/pisi".format(image_dir))
             # os.system("cp -rf ./data/kde_config/.local {}/home/pisi".format(image_dir))
             chrun("chown -R pisi:wheel /home/pisi/.config")
@@ -930,6 +947,7 @@ def squash_image(project):
         # FIXME: ekleme işleminde sorun olmaması için --no-fetch eklenebilir
         run("pisi ar -dy -D'{0}' live {1} --ignore-check --no-fetch".format(
             image_dir, project.live_repo_uri))
+       
         run("pisi rr -dy -D'{}' pisilinux-install".format(
             image_dir), ignore_error=True)
 
@@ -1110,7 +1128,7 @@ def make_image(project):
     try:
         repo = project.get_repo()
         repo_dir = project.image_repo_dir()
-#        image_file = project.image_file()
+    #image_file = project.image_file()
 
         image_dir = project.image_dir()
         run('umount %s/proc' % image_dir, ignore_error=True)
@@ -1229,6 +1247,9 @@ def make_image(project):
         obj.setUser(0, "", "", "", "pisilinux", "",
                     dbus_interface="tr.org.pardus.comar.User.Manager")
         if project.type != "install":
+            shutil.copy("./data/yali/yali.desktop",
+                    "{}/etc/skel/".format(image_dir))
+            
             obj.addUser(1000, "pisi", "Pisi Linux", "/home/pisi", "/bin/bash",
                         "live", ["wheel", "users", "lp", "lpadmin", "cdrom",
                                  "floppy", "disk", "audio", "video", "power",
@@ -1300,15 +1321,15 @@ def load_grub_params(project, initcpio=False):
     image_dir = project.image_dir()
     ver = [ver for ver in project.title.split(" ") if len(ver.split(".")) > 1]
     grub_dir = "/grub/themes/pisilinux/"
-    dir_ = "%s/usr/share" %image_dir + grub_dir
+    dir_ = "%s/usr/share" % image_dir + grub_dir
     pf2s = glob.glob1(dir_, "*.pf2")
-    loadfonts = ["loadfont ($root)/boot" + grub_dir + f for f in pf2s ]
+    loadfonts = ["loadfont ($root)/boot" + dir_ + f for f in pf2s ]
     loadfonts = "\n".join(loadfonts)
 
     rescue = """menuentry "PisiLinux %(version)s UEFI - %(res_trans)s" {
     load_video
-    linux /EFI/pisi/kernel.efi yali=rescue
-    initrd /EFI/pisi/initrd.img
+    linux /pisi/boot/kernel.efi yali=rescue
+    initrd /pisi/boot/initrd.img
 }"""
 
 
@@ -1363,9 +1384,10 @@ def make_EFI(project, grub=True):
 
     if not os.path.exists(efi_path):
         os.makedirs(efi_path)
-        os.makedirs(os.path.join(efi_path, "boot"))
-
+        os.makedirs(os.path.join(efi_path, "boot"))   
+    
     run("rm -rf %s/efi.img" % work_dir)
+
 
     # grub ####################################################################
     if grub:
@@ -1384,6 +1406,7 @@ def make_EFI(project, grub=True):
 
         run("rm %s/mkgrubx64.sh" % image_dir)
         run("rm %s/grub.cfg" % image_dir)
+        
     # grub ####################################################################
 
     run("dd if=/dev/zero bs=1M count=20 of=%s/efi.img" % work_dir)
@@ -1391,40 +1414,37 @@ def make_EFI(project, grub=True):
     run("mount %s/efi.img %s" % (work_dir, efi_tmp))
 
     os.makedirs(os.path.join(efi_tmp, "EFI/boot"))
+    #os.makedirs(os.path.join(efi_tmp, "EFI/pisi"))
+   
     # os.makedirs(os.path.join(efi_tmp, "boot/efi/"))
 
     # grub ####################################################################
     if grub:
-        run("cp -rf %s/EFI %s/" % ("./data/efi_grub", efi_tmp),
-            ignore_error=True)
-        run("cp -rf %s/EFI %s/" % ("./data/efi_grub", iso_dir),
-            ignore_error=True)
-        run("cp %s/grubx64.efi %s/EFI/boot/bootx64.efi" % (image_dir, iso_dir),
-            ignore_error=True)
-        run("cp %s/grubx64.efi %s/EFI/boot/bootx64.efi" % (image_dir, efi_tmp),
-            ignore_error=True)
-        run("rm -rf %s/EFI/pisi" % iso_dir,
-            ignore_error=True)
+        run("cp -rf %s/EFI %s/" % ("./data/efi_grub", efi_tmp), ignore_error=True)
+        run("cp -rf %s/EFI %s/" % ("./data/efi_grub", iso_dir), ignore_error=True)
+
+        #run("cp %s/grubx64.efi %s/EFI/boot/bootx64.efi" % (image_dir, iso_dir), ignore_error=True)
+       
+        #run("cp %s/grubx64.efi %s/EFI/boot/bootx64.efi" % (image_dir, efi_tmp), ignore_error=True)
+        run("rm -rf %s/EFI/pisi" % iso_dir, ignore_error=True)
 
         # grub teması icons dizini yüklenmediği için isoya yüklenmesi
+        
         run("mkdir -p %s/EFI/boot/grub2/themes" % iso_dir, ignore_error=True)
-        run("cp -R %s/usr/share/grub/themes/pisilinux/ %s/EFI/boot/grub2/themes" % (image_dir, iso_dir),
-            ignore_error=True)
-
-        run("cp %s/usr/share/pixmaps/lang-tr.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_tr.png" % (image_dir, iso_dir),
-            ignore_error=True)
-        run("cp %s/usr/share/pixmaps/lang-en-US.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_en_us.png" % (image_dir, iso_dir),
-            ignore_error=True)
+        run("cp -R %s/usr/share/grub/themes/pisilinux/ %s/EFI/boot/grub2/themes" % (image_dir, iso_dir), ignore_error=True)
+        run("cp data/efi_grub.cfg %s/EFI/boot/grub2/grub.cfg" % (iso_dir), ignore_error=True)
+        run("cp %s/usr/share/grub/unicode.pf2 %s/EFI/boot/grub2/" % (image_dir, iso_dir), ignore_error=True)
+        run("cp %s/usr/share/grub/*.pf2 %s/EFI/boot/grub2/" % (image_dir, iso_dir), ignore_error=True)
+        
         # language icons
-
-
-
-        # run("cp %s/tr.gkb %s/EFI/boot/" % (image_dir, iso_dir),
-        #   ignore_error=True)
-        # run("cp %s/en.gkb %s/EFI/boot/" % (image_dir, iso_dir),
-        #   ignore_error=True)
+        #run("cp %s/usr/share/pixmaps/icons/lang-tr.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_tr.png" % (image_dir, iso_dir), ignore_error=True)
+        #run("cp %s/usr/share/pixmaps/icons/lang-en-US.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_en_us.png" % (image_dir, iso_dir), ignore_error=True)
+        
+        # run("cp %s/tr.gkb %s/EFI/boot/" % (image_dir, iso_dir), ignore_error=True)
+        # run("cp %s/en.gkb %s/EFI/boot/" % (image_dir, iso_dir), ignore_error=True)
 
         run("rm %s/grubx64.efi" % image_dir)
+        
         # run("rm %s/EFI/boot/loader.efi" % iso_dir)
         # run("rm %s/EFI/boot/loader.efi" % efi_tmp)
         # grub ################################################################
@@ -1580,6 +1600,7 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         # -isohybrid-gpt-basdat \
         # -publisher "%s" -A "%s"  %s' % (
         #     label, iso_file, publisher, application, iso_dir)
+
         the_iso_command = 'xorriso -as mkisofs \
         -f  -V "%s" -cache-inodes -J -l\
         -iso-level 3 \
@@ -1618,7 +1639,11 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
                     "\n".join(["%s %d" % (k, v) for (k, v) in sorted_list]))
                 run(the_sorted_iso_command)
         else:
+            """
+            iş bitince burası silinecek
+            """
             run(the_iso_command)
+
         # convert iso to a hybrid one
         # run("isohybrid --uefi %s" % iso_file)
         # run("isohybrid %s -b %s" % (
@@ -1627,6 +1652,8 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         with open(
                 os.path.join(project.work_dir, "finished.txt"), 'w') as _file:
             _file.write("make-iso")
+
+
     except KeyboardInterrupt:
         print("Keyboard Interrupt: make_iso() cancelled.")
         sys.exit(1)

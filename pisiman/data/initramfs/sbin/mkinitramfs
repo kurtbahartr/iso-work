@@ -86,7 +86,7 @@ def run(*cmd):
     return subprocess.call(cmd, shell=True, stdout=f, stderr=f)
 
 def printFail(msg):
-    print "ERROR: %s" % msg
+    print("ERROR: %s" % msg)
 
     tempdir.cleanup()
     sys.exit(1)
