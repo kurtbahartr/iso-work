@@ -5,8 +5,8 @@
 /lib/libc.so.6
 /lib/libdl.so.2
 /lib/libm.so.6
-/lib/libply-splash-core.so.5
-/lib/libply.so.5
+/usr/lib/libply-splash-core.so.5
+/usr/lib/libply.so.5
 /lib/libpthread.so.0
 /lib/librt.so.1
 /lib/libz.so.1
@@ -32,6 +32,8 @@
 /usr/lib/plymouth/text.so
 /usr/lib/plymouth/tribar.so
 /usr/lib/plymouth/two-step.so
+/usr/lib/libevdev.so.2
+/usr/lib/libxkbcommon.so.0
 /usr/share/pixmaps/plymouth-pisilinux.png
 /usr/share/plymouth/plymouthd.defaults
 /usr/share/plymouth/themes/details/details.plymouth
