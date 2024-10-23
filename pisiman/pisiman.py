@@ -14,6 +14,7 @@
 # System
 import sys
 import time
+import math
 from repotools import packages
 
 
@@ -87,8 +88,12 @@ def maker(op, project_file):
         maker.make_iso(project)
 
     end = time.time()
-    print("Total time is", end - start, "seconds.")
-
+    #print("Total time is", end - start, "seconds.")
+    total_time = end - start
+    hours = int(total_time // 3600)
+    minutes = int((total_time % 3600) // 60)
+    seconds = int(total_time % 60)
+    print("Total time > {}:{}:{}".format(hours, minutes, seconds))
 
 def usage(app):
     print("Usage: %s [command] path/to/project.xml" % app)

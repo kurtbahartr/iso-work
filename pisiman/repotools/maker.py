@@ -591,19 +591,24 @@ def setup_live_dm(project, dm):
 
 
 def setup_live_policykit_conf(project):
-    policykit_conf_tmpl = """[Live CD Rules]
-Identity=unix-user:pisi
-Action=*
-ResultAny=yes
-ResultInactive=yes
-ResultActive=yes
+    policykit_conf_tmpl = """polkit.addRule(function(action, subject) {
+    if (subject.user == "pisi") {
+        return polkit.Result.YES;
+    }
+});
 """
 
     # Write PolicyKit.conf
     image_dir = project.image_dir()
     # make sure etc/polkit-1/localauthority/90-mandatory.d directory exists
-    os.makedirs(os.path.join(image_dir, "etc/polkit-1/localauthority/90-mandatory.d"), 0o644)
-    dest = os.path.join(image_dir, "etc/polkit-1/localauthority/90-mandatory.d/livecd.pkla")
+    dir_path = os.path.join(image_dir, "usr/share/polkit-1/rules.d")
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path, mode=0o755)
+    
+    #shutil.chown(dir_path, user='root', group='root')
+
+    #os.makedirs(os.path.join(image_dir, "etc/polkit-1/localauthority/90-mandatory.d"), 0o644)
+    dest = os.path.join(image_dir, "usr/share/polkit-1/rules.d/49-livecd.rules")
 
     f = open(dest, "w")
     f.write(policykit_conf_tmpl)
@@ -652,9 +657,9 @@ def install_packages(project):
         packages = project.all_packages
     else:
         packages = project.all_install_image_packages  # or repo.full_deps("yali")
-    run('pisi --yes-all --ignore-comar --ignore-dependency \
-        --ignore-file-conflicts -D"%s" it %s \
-        ' % (image_dir, " ".join(packages)))
+    # NOTE: 18-10-2024
+    run('pisi --yes-all --ignore-comar --ignore-dependency  --ignore-file-conflicts -D"%s" it %s ' % (image_dir, " ".join(packages)))
+
     # --ignore-dep added to avoid dependencies re not in system.base like exceptions
     # for name in project.all_packages:
     #     flag = True
@@ -724,12 +729,12 @@ def squash_live_config_image(project):
 
     if project.type == "live":
         # cp2skel("./data/yali/yali.desktop", ".config/autostart")
-        shutil.copy("./data/yali/yali.desktop", "{}/usr/share/applications/".format(config_image_dir))
-        shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/Masaüstü/".format(config_image_dir))
-     
+   
         # shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/.config/autostart/".format(config_image_dir))
-        shutil.copy("./data/yali/org.pisilinux.yali.policy", "{}/usr/share/polkit-1/actions/".format(config_image_dir))
+        shutil.copy("./data/yali/yali.desktop", "{}/usr/share/applications/".format(config_image_dir))
         shutil.copy("./data/yali/yali-rescue.desktop", "{}/usr/share/applications/".format(config_image_dir))
+        shutil.copy("./data/yali/org.pisilinux.yali.policy", "{}/usr/share/polkit-1/actions/".format(config_image_dir))
+ 
 
 
 
@@ -750,25 +755,9 @@ def squash_live_config_image(project):
 
         os.system("cp -rf %s/%s %s/var/cache/pisi/packages/" % (repo.cache_dir, baselayout_uri, config_image_dir))
         # os.system("cp -rf %s/%s %s/var/cache/pisi/packages/" % (repo.cache_dir, repo.packages['kernel'].uri, config_image_dir))
+        
 
-        # kde yapılandırması ================================================
-        if 'plasma-workspace' in project.all_install_image_packages:
-            #os.system("cp -rf ./data/kde_conf/skel/.config {}/home/pisi".format(config_image_dir))
-            os.system("cp -rf ./data/kde_conf/.local {}/home/pisi".format(config_image_dir))
-         
-            # bu kısım kullanıcı oluşturulmadan önce eklenmeli
-            #os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(config_image_dir))
-            os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/".format(config_image_dir))
-            # os.system("cp -rf ./data/kde_config/.config {}/home/pisi".format(config_image_dir))
-            # os.system("cp -rf ./data/kde_config/.local {}/home/pisi".format(config_image_dir))
-            chrun("chown -R pisi:wheel /home/pisi/.config")
-            chrun("chown -R pisi:wheel /home/pisi/.local")
-
-            # os.system("cp -rf %s/%s %s/var/cache/pisi/packages/" % (repo.cache_dir, repo.packages['sddm'].uri, config_image_dir))
-
-        # kde yapılandırması ================================================
-        # setup_live_sddm(project)
-
+       
 
     if project.type == "install":
         if os.path.exists("%s/run/livemedia" % image_dir):
@@ -792,8 +781,7 @@ def squash_live_config_image(project):
 
     # yalı ile kurulacak depolar
     if os.path.exists("{}/etc/yali/".format(image_dir)):
-        shutil.copy("./data/yali/repos.json",
-        "{}/etc/yali/".format(image_dir))
+        shutil.copy("./data/yali/repos.json", "{}/etc/yali/".format(image_dir))
 
 
 def resolve_repo_uri(text):
@@ -829,21 +817,6 @@ def squash_image(project):
     # sqfs dosyasına yazılacak! bu sayede silme ya yeniden yapılandırma
     # işlemlerinin büyük bir kısmının yapılmasına gerek kalmayacak
     if project.type == "live":
-        shutil.copy("./data/yali/yali.desktop", "{}/usr/share/applications/".format(image_dir))
-        shutil.copy("./data/yali/org.pisilinux.yali.policy", "{}/usr/share/polkit-1/actions/".format(image_dir))
-        shutil.copy("./data/yali/yali-rescue.desktop", "{}/usr/share/applications/".format(image_dir))
-        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
-        
-        # cp2skel("./data/yali/yali.desktop", ".config/autostart")
-        # shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/.config/autostart/".format(image_dir))
-        
-        # lxqt
-        #run("mkdir -p %s/home/pisi/.config/lxqt" % image_dir)
-        #shutil.copy("./data/lxqt/session.conf", "{}/home/pisi/.config/lxqt/".format(image_dir))
-        
-        #shutil.copy("./data/lxqt/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))              
-        #shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/Desktop/".format(image_dir))
-
         repo = project.get_repo()
         kernel_version = repo.packages['kernel'].version
         autoload_module = "{}/etc/modules.autoload.d/kernel-{}".format(
@@ -862,24 +835,10 @@ def squash_image(project):
 
         # kde yapılandırması ================================================
         if 'plasma-workspace' in project.all_install_image_packages:
-            # varayılan olacağından kurulumda olmalı
-            # os.system("cp -rf ./data/kde_conf/skel/.config {}/home/pisi".format(image_dir))
-
-            # yeni kullanıcıda sık kullanılarlar için skel e eklenmeli
-            # os.system("cp -rf ./data/kde_conf/.local {}/home/pisi".format(image_dir))
-            # os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(image_dir))
-            os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/".format(image_dir))
-            os.system("cp -rf ./data/kde_conf/usr {}/".format(image_dir))
-            
-            #erkan
-            os.system("cp -rf ./data/etc {}/etc".format(image_dir))
-        
+                  
             chrun("chown -R pisi:wheel /home/pisi/.config")
-            chrun("chown -R pisi:wheel /home/pisi/.local")
-
-            #os.system("cp -rf ./data/kde_conf/wallpapers {}/usr/share".format(image_dir))
-            # os.system("cp -rf ./data/kde_config/.config {}/home/pisi".format(image_dir))
-            # os.system("cp -rf ./data/kde_config/.local {}/home/pisi".format(image_dir))
+            chrun("chown -R pisi:wheel /home/pisi/.local")           
+           
             # os.system("cp -rf %s/%s %s/var/cache/pisi/packages/" % (repo.cache_dir, repo.packages['sddm'].uri, image_dir))
 
         # kde yapılandırması ================================================
@@ -1101,24 +1060,25 @@ def make_image(project):
     try:
         repo = project.get_repo()
         repo_dir = project.image_repo_dir()
-#        image_file = project.image_file()
+        #image_file = project.image_file()
 
         image_dir = project.image_dir()
         run('umount %s/proc' % image_dir, ignore_error=True)
         run('umount %s/sys' % image_dir, ignore_error=True)
 
         image_dir = project.image_dir(clean=True)
-        run('pisi --yes-all -D"%s" ar pisilinux-install %s --ignore-check\
-            ' % (image_dir, repo_dir + "/pisi-index.xml.bz2"))
+
+        run('pisi --yes-all -D"%s" ar pisilinux-install %s --ignore-check' % (image_dir, repo_dir + "/pisi-index.xml.bz2"))
         print("project type = ", project.type)
+        
         if project.type == "install":
             if project.all_install_image_packages:
-                install_image_packages = " ".join(
-                    project.all_install_image_packages)
+                install_image_packages = " ".join(project.all_install_image_packages)
             else:
                 install_image_packages = " ".join(repo.full_deps("yali"))
-            run('pisi --yes-all --ignore-comar --ignore-dep -D"%s" it %s\
-                ' % (image_dir, install_image_packages))
+            
+            run('pisi --yes-all --ignore-comar --ignore-dep -D"%s" it %s' % (image_dir, install_image_packages))
+
             if project.plugin_package:
                 plugin_package = project.plugin_package
                 run('pisi --yes-all --ignore-comar -D"%s" it %s' % (
@@ -1220,27 +1180,42 @@ def make_image(project):
         obj.setUser(0, "", "", "", "pisilinux", "",
                     dbus_interface="tr.org.pardus.comar.User.Manager")
         if project.type != "install":
+            os.system("cp -rf ./data/etc/skel/ %s/etc/" % image_dir)
+            os.system("cp -rf ./data/etc/xdg/ %s/etc/" % image_dir)
+
             obj.addUser(1000, "pisi", "Pisi Linux", "/home/pisi", "/bin/bash",
-                        "live", ["wheel", "users", "root", "lp", "lpadmin", "cdrom",
+                        "live", ["wheel", "users", "lp", "lpadmin", "cdrom",
                                  "floppy", "disk", "audio", "video", "power",
                                  "dialout"], [], [],
                         dbus_interface="tr.org.pardus.comar.User.Manager")
 
         # FIXME: bu yapıandırma liveconfig isinli sqfs dosyasına aktarılacak!
         # -------------------------------------------------------------------
+        # NOTE: 19-10-2024 erkan ışık trafından eklendi
+        os.system("mkdir -p %s/home/pisi/Desktop" % image_dir)
+        os.system("cp -rf ./data/yali/yali.desktop %s/home/pisi/Desktop" % image_dir)
+        os.system("cp -rf ./data/yali/yali-rescue.desktop %s/home/pisi/Desktop" % image_dir)
+
+        os.system("mkdir -p %s/home/pisi/Masaüstü" % image_dir)
+        os.system("cp -rf ./data/yali/yali.desktop %s/home/pisi/Masaüstü" % image_dir)
+        os.system("cp -rf ./data/yali/yali-rescue.desktop %s/home/pisi/Masaüstü" % image_dir)
+
+        #os.system("cp -rf ./data/livecd.pkla %s/etc/polkit-1/localauthority/90-mandatory.d" % image_dir)
+                      
+        shutil.copy("./data/yali/yali.desktop", "{}/usr/share/applications/".format(image_dir))
+        shutil.copy("./data/yali/org.pisilinux.yali.policy", "{}/usr/share/polkit-1/actions/".format(image_dir))
+        shutil.copy("./data/yali/yali-rescue.desktop", "{}/usr/share/applications/".format(image_dir))
+        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+
+
+
+        
         path1 = os.path.join(image_dir, "usr/share/baselayout/inittab.live")
         path2 = os.path.join(image_dir, "etc/inittab")
         os.unlink(path2)
         run('mv "%s" "%s"' % (path1, path2))
         
-        # 13102024 tarihinde eklendi
-        os.system("mkdir -p %s/home/pisi/Desktop" % image_dir)
-        os.system("mkdir -p %s/home/pisi/Masaüstü" % image_dir)
-        shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/Desktop".format(image_dir))
-        shutil.copy("./data/yali/yali.desktop", "{}/home/pisi/Masaüstü".format(image_dir))
-        shutil.copy("./data/yali/yali-rescue.desktop", "{}/home/pisi/Desktop".format(image_dir))
-        shutil.copy("./data/yali/yali-rescue.desktop", "{}/home/pisi/Masaüstü".format(image_dir))
-        shutil.copy("./data/kxkbrc", "{}/home/pisi/.config".format(image_dir))
+        
 
 
         # if project.type != "install" and ("sddm" in project.all_packages):
@@ -1248,8 +1223,12 @@ def make_image(project):
             # setup_live_sddm(project)  # setup_live_sddm olarak değiştirildi
             setup_live_dm(project, project.display_manager())
             setup_live_policykit_conf(project)
+        
+        
+       
         # -------------------------------------------------------------------
 
+        
         if project.type == "install":
             copyPisiIndex(project)
 
@@ -1406,10 +1385,12 @@ def make_EFI(project, grub=True):
         run("mkdir -p %s/EFI/boot/grub2/themes" % iso_dir, ignore_error=True)
         run("cp -R %s/usr/share/grub/themes/pisilinux/ %s/EFI/boot/grub2/themes" % (image_dir, iso_dir), ignore_error=True)
 
-        run("cp %s/usr/share/pixmaps/lang-tr.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_tr.png" % (image_dir, iso_dir), ignore_error=True)
-        run("cp %s/usr/share/pixmaps/lang-en-US.png %s/EFI/boot/grub2/themes/pisilinux/icons/lang_en_us.png" % (image_dir, iso_dir), ignore_error=True)
-        
         # language icons
+        run("cp -rf ./data/icons %s/EFI/boot/grub2/themes/pisilinux " % iso_dir, ignore_error=True)
+       
+       # run("mkdir -p %s/EFI/pisilinux" % iso_dir, ignore_error=True)
+       # run("cp ./data/efi_grub_bck/*  %s/EFI/pisilinux/" % (iso_dir), ignore_error=True)
+        
         # run("cp %s/tr.gkb %s/EFI/boot/" % (image_dir, iso_dir), ignore_error=True)
         # run("cp %s/en.gkb %s/EFI/boot/" % (image_dir, iso_dir), ignore_error=True)
 
@@ -1569,8 +1550,27 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         # -isohybrid-gpt-basdat \
         # -publisher "%s" -A "%s"  %s' % (
         #     label, iso_file, publisher, application, iso_dir)
+        
+        # the_iso_command = 'xorriso -as mkisofs \
+        # -f  -V "%s" -J -l\
+        # -iso-level 3 \
+        # -o "%s" \
+        # -isohybrid-mbr /usr/lib/syslinux/bios/isohdpfx.bin \
+        # -c isolinux/boot.cat \
+        # -b isolinux/isolinux.bin \
+        # -no-emul-boot -boot-load-size 4 -boot-info-table \
+        # -eltorito-alt-boot \
+        # -e efi.img \
+        # -no-emul-boot \
+        # -isohybrid-gpt-basdat \
+        # -append_partition 2 0xef %s/efi.img \
+        # -partition_cyl_align all \
+        # -publisher "%s" -A "%s" %s' % (
+        #     label, iso_file, iso_dir, publisher, application, iso_dir)
+
+        #new iso command        
         the_iso_command = 'xorriso -as mkisofs \
-        -f  -V "%s" -cache-inodes -J -l\
+        -f -V "%s" -J -l \
         -iso-level 3 \
         -o "%s" \
         -isohybrid-mbr /usr/lib/syslinux/bios/isohdpfx.bin \
@@ -1582,9 +1582,11 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         -no-emul-boot \
         -isohybrid-gpt-basdat \
         -append_partition 2 0xef %s/efi.img \
-        -partition_cyl_align all \
-        -publisher "%s" -A "%s"  %s' % (
+        -partition_offset 16 \
+        -appended_part_as_gpt \
+        -publisher "%s" -A "%s" %s' % (
             label, iso_file, iso_dir, publisher, application, iso_dir)
+        
 
 
         # for grub2-mkrescue ---------------------------------------------------
