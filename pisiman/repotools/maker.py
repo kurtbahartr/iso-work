@@ -492,6 +492,8 @@ def setup_live_sddm(project):
     #22-05-2022 tarihinde değiştirilmiştir.
     #sddmconf_path = os.path.join(image_dir, "etc/sddm.conf")
     sddmconf_path = os.path.join(image_dir, "usr/lib/sddm/sddm.conf.d/sddm.conf")
+    shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
+
     """
     if os.path.exists(sddmconf_path):
         lines = []
@@ -1205,7 +1207,6 @@ def make_image(project):
         shutil.copy("./data/yali/yali.desktop", "{}/usr/share/applications/".format(image_dir))
         shutil.copy("./data/yali/org.pisilinux.yali.policy", "{}/usr/share/polkit-1/actions/".format(image_dir))
         shutil.copy("./data/yali/yali-rescue.desktop", "{}/usr/share/applications/".format(image_dir))
-        shutil.copy("./data/kde_conf/sddm.conf.d/sddm.conf", "{}/usr/lib/sddm/sddm.conf.d/".format(image_dir))
 
 
 
