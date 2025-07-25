@@ -1,3 +1,0 @@
-2024-10-15_23-50 Preparing ISO
-2024-10-15_23-50 Generating isolinux files
-2024-10-15_23-50 Generating isolinux config files

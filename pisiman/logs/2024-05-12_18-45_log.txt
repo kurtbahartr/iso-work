@@ -1,2 +1,0 @@
-2024-05-12_18-45 Generating isolinux files
-2024-05-12_18-45 Generating isolinux config files
