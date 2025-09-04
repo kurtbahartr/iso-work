@@ -1,9 +1,0 @@
-chardet
-idna
-requests
-sip
-urllib3
-PyQt6
-PyQt6-Qt6
-PyQt6-sip
-qtermwidget6 

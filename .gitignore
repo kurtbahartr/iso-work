@@ -2,8 +2,10 @@
 *.pyc
 __pycache__/
 
-
 # Geçici veya kullanıcıya özel dosyalar
 yapılacaklar
 *remove*
 sil
+
+# Project files
+projectFiles/
