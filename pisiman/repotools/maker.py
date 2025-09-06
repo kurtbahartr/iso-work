@@ -1547,10 +1547,11 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         -b isolinux/isolinux.bin \
         -no-emul-boot -boot-load-size 4 -boot-info-table \
         -eltorito-alt-boot \
-        -e efi.img \
         -no-emul-boot \
         -isohybrid-gpt-basdat \
         -append_partition 2 0xef %s/efi.img \
+        -appended_part_as_gpt \
+        -e --interval:appended_partition_2:all:: \
         -partition_cyl_align all \
         -publisher "%s" -A "%s"  %s' % (
             label, iso_file, iso_dir, publisher, application, iso_dir)
