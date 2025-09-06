@@ -6,7 +6,7 @@
     <IsoOutputDir use-project-dir="True"></IsoOutputDir>
     <PackageCollections>
         <PackageCollection default="True">
-            <Id>vujJAzlEL</Id>
+            <Id>64BsqVAo2SsZFfI</Id>
             <Icon>kde-desktop-collection-icon.png</Icon>
             <Translations>
                 <Translation language="ru_RU">
@@ -99,6 +99,7 @@
                 <SelectedPackage>gnome-desktop</SelectedPackage>
                 <SelectedPackage>grub2-editor</SelectedPackage>
                 <SelectedPackage>gwenview</SelectedPackage>
+                <SelectedPackage>hack-fonts-ttf</SelectedPackage>
                 <SelectedPackage>icon-theme-kora</SelectedPackage>
                 <SelectedPackage>intel-ucode</SelectedPackage>
                 <SelectedPackage>kactivitymanagerd</SelectedPackage>
@@ -135,7 +136,11 @@
                 <SelectedPackage>module-broadcom-wl</SelectedPackage>
                 <SelectedPackage>module-virtualbox</SelectedPackage>
                 <SelectedPackage>network-manager-applet</SelectedPackage>
+                <SelectedPackage>noto-emoji-fonts</SelectedPackage>
+                <SelectedPackage>noto-fonts</SelectedPackage>
+                <SelectedPackage>noto-fonts-cjk</SelectedPackage>
                 <SelectedPackage>ntp-client</SelectedPackage>
+                <SelectedPackage>ocean-sound-theme</SelectedPackage>
                 <SelectedPackage>okular</SelectedPackage>
                 <SelectedPackage>package-manager</SelectedPackage>
                 <SelectedPackage>partitionmanager</SelectedPackage>
@@ -1313,6 +1318,7 @@
         <SelectedPackage>gnome-desktop</SelectedPackage>
         <SelectedPackage>grub2-editor</SelectedPackage>
         <SelectedPackage>gwenview</SelectedPackage>
+        <SelectedPackage>hack-fonts-ttf</SelectedPackage>
         <SelectedPackage>icon-theme-kora</SelectedPackage>
         <SelectedPackage>intel-ucode</SelectedPackage>
         <SelectedPackage>kactivitymanagerd</SelectedPackage>
@@ -1349,7 +1355,11 @@
         <SelectedPackage>module-broadcom-wl</SelectedPackage>
         <SelectedPackage>module-virtualbox</SelectedPackage>
         <SelectedPackage>network-manager-applet</SelectedPackage>
+        <SelectedPackage>noto-emoji-fonts</SelectedPackage>
+        <SelectedPackage>noto-fonts</SelectedPackage>
+        <SelectedPackage>noto-fonts-cjk</SelectedPackage>
         <SelectedPackage>ntp-client</SelectedPackage>
+        <SelectedPackage>ocean-sound-theme</SelectedPackage>
         <SelectedPackage>okular</SelectedPackage>
         <SelectedPackage>package-manager</SelectedPackage>
         <SelectedPackage>partitionmanager</SelectedPackage>
@@ -2562,6 +2572,7 @@
         <SelectedPackage>module-virtualbox</SelectedPackage>
         <SelectedPackage>network-manager-applet</SelectedPackage>
         <SelectedPackage>ntp-client</SelectedPackage>
+        <SelectedPackage>ocean-sound-theme</SelectedPackage>
         <SelectedPackage>okular</SelectedPackage>
         <SelectedPackage>package-manager</SelectedPackage>
         <SelectedPackage>partitionmanager</SelectedPackage>
@@ -2571,7 +2582,6 @@
         <SelectedPackage>plasma-browser-integration</SelectedPackage>
         <SelectedPackage>plasma-desktop</SelectedPackage>
         <SelectedPackage>plasma-integration</SelectedPackage>
-        <SelectedPackage>plasma-integration-data</SelectedPackage>
         <SelectedPackage>plasma-pa</SelectedPackage>
         <SelectedPackage>plasma-sdk</SelectedPackage>
         <SelectedPackage>plasma-systemmonitor</SelectedPackage>
@@ -2615,6 +2625,7 @@
         <SelectedPackage>vokoscreenNG</SelectedPackage>
         <SelectedPackage>xdg-desktop-portal-kde</SelectedPackage>
         <SelectedPackage>xdg-user-dirs</SelectedPackage>
+        <SelectedPackage>xdg-utils</SelectedPackage>
         <SelectedPackage>xinit</SelectedPackage>
         <SelectedPackage>xorg-input-acecad</SelectedPackage>
         <SelectedPackage>xorg-input-elographics</SelectedPackage>
@@ -3417,6 +3428,7 @@
         <Package>ntp-client</Package>
         <Package>ntp-server</Package>
         <Package>numactl</Package>
+        <Package>ocean-sound-theme</Package>
         <Package>okular</Package>
         <Package>onetbb</Package>
         <Package>openal</Package>
@@ -3477,7 +3489,6 @@
         <Package>plasma-desktop</Package>
         <Package>plasma-disks</Package>
         <Package>plasma-integration</Package>
-        <Package>plasma-integration-data</Package>
         <Package>plasma-nm</Package>
         <Package>plasma-pa</Package>
         <Package>plasma-sdk</Package>
@@ -3792,6 +3803,7 @@
         <Package>xdg-dbus-proxy</Package>
         <Package>xdg-desktop-portal-kde</Package>
         <Package>xdg-user-dirs</Package>
+        <Package>xdg-utils</Package>
         <Package>xdg-utils-cxx</Package>
         <Package>xfsprogs</Package>
         <Package>xine-lib</Package>

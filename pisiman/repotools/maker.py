@@ -813,15 +813,21 @@ def squash_image(project):
 
             # yeni kullanıcıda sık kullanılarlar için skel e eklenmeli
             # os.system("cp -rf ./data/kde_conf/.local {}/home/pisi".format(image_dir))
-            # os.system("cp -rf ./data/kde_conf/skel/ {}/etc/".format(image_dir))
+            os.system("mkdir -p {}/home/pisi/.config".format(image_dir))
+            
+            # 05-09-2025 tarihinde eklendi
+            os.system("cp -rf ./data/etc/skel/.config {}/home/pisi".format(image_dir))
+            os.system("cp -rf ./data/etc/skel/.config/ {}/etc/skel/".format(image_dir))
+            #os.system("cp -rf ./data/etc/ {}/etc/".format(image_dir))
+            # /05-09-2025 tarihinde eklendi
+
             os.system("cp -rf ./data/kde_conf/xdg/ {}/etc/".format(image_dir))
             os.system("cp -rf ./data/kde_conf/usr {}/".format(image_dir))
             #erkan
             os.system("cp -rf ./data/kde_conf/wallpapers {}/usr/share".format(image_dir))
-            os.system("cp -rf ./data/etc {}/etc".format(image_dir))
+            #os.system("cp -rf ./data/etc {}/etc".format(image_dir))
             # os.system("cp -rf ./data/kde_config/.config {}/home/pisi".format(image_dir))
             # os.system("cp -rf ./data/kde_config/.local {}/home/pisi".format(image_dir))
-            os.system("mkdir -p {}/home/pisi/.config".format(image_dir))
             chrun("chown -R pisi:wheel /home/pisi/.config")
             chrun("chown -R pisi:wheel /home/pisi/.local")
 
@@ -1538,7 +1544,25 @@ def make_iso(project, toUSB=False, dev="/dev/sdc1"):
         # -isohybrid-gpt-basdat \
         # -publisher "%s" -A "%s"  %s' % (
         #     label, iso_file, publisher, application, iso_dir)
-        the_iso_command = 'xorriso -as mkisofs \
+        
+        the_iso_command3 = 'xorriso -as mkisofs \
+        -f  -V "%s" -cache-inodes -J -l\
+        -iso-level 3 \
+        -o "%s" \
+        -isohybrid-mbr /usr/lib/syslinux/bios/isohdpfx.bin \
+        -c isolinux/boot.cat \
+        -b isolinux/isolinux.bin \
+        -no-emul-boot -boot-load-size 4 -boot-info-table \
+        -eltorito-alt-boot \
+        -e efi.img \
+        -no-emul-boot \
+        -isohybrid-gpt-basdat \
+        -append_partition 2 0xef %s/efi.img \
+        -partition_cyl_align all \
+        -publisher "%s" -A "%s"  %s' % (
+            label, iso_file, iso_dir, publisher, application, iso_dir)
+
+         the_iso_command = 'xorriso -as mkisofs \
         -f  -V "%s" -cache-inodes -J -l\
         -iso-level 3 \
         -o "%s" \
